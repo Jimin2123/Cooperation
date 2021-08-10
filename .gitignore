@@ -24,3 +24,13 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Firebase
+.firebaserc
+*-debug.log
+/firebase-data
+.github
+firebase-export-*
+
+# API Key 환경변수
+.env*
