@@ -1,0 +1,164 @@
+{
+  "userItems": [
+    { "title": "유저 정보 확인", "icon": "mdi-account" },
+    { "title": "참여중인 프로젝트", "icon": "mdi-application-cog" },
+    { "title": "관심있는 프로젝트", "icon": "mdi-archive" }
+  ],
+  "items": [
+    {
+      "title": "메인",
+      "icon": "mdi-home",
+      "sub": [
+        {
+          "title": "홈",
+          "icon": "mdi-home-outline",
+          "to": "/"
+        },
+        {
+          "title": "전체 게시물",
+          "icon": "mdi-layers-triple-outline",
+          "to": "/article"
+        },
+        {
+          "title": "BEST 프로젝트",
+          "icon": "mdi-trophy-outline",
+          "to": "/bestBoard"
+        },
+        {
+          "title": "HOT 게시판",
+          "icon": "mdi-fire",
+          "to": "/fireBoard"
+        },
+        {
+          "title": "프로젝트 순위",
+          "icon": "mdi-git",
+          "to": "/rank"
+        }
+      ]
+    },
+    {
+      "title": "프로젝트",
+      "icon": "mdi-account-group",
+      "sub": [
+        {
+          "title": "All",
+          "icon": "mdi-border-all-variant",
+          "to": "/project"
+        },
+        {
+          "title": "스터디",
+          "icon": "mdi-book-open-page-variant",
+          "to": "/study"
+        },
+        {
+          "title": "Teams",
+          "chip": "모집중",
+          "color": "primary",
+          "icon": "mdi-application-import",
+          "to": "/recruiting"
+        },
+        {
+          "title": "Teams",
+          "chip": "진행중",
+          "color": "warning",
+          "icon": "mdi-application-cog",
+          "to": "/ongoing"
+        },
+        {
+          "title": "Teams",
+          "chip": "완료",
+          "color": "success",
+          "icon": "mdi-application-export",
+          "to": "/done"
+        }
+      ]
+    },
+    {
+      "title": "커뮤니티",
+      "icon": "mdi-comment-text-multiple",
+      "sub": [
+        {
+          "title": "All",
+          "icon": "mdi-border-all-variant",
+          "to": "/project"
+        },
+        {
+          "title": "공지사항",
+          "icon": "mdi-antenna",
+          "to": "/notice"
+        },
+        {
+          "title": "질문",
+          "icon": "mdi-comment-question-outline",
+          "to": "/question"
+        },
+        {
+          "title": "일상",
+          "icon": "mdi-chart-timeline",
+          "to": "/daily"
+        },
+        {
+          "title": "포럼",
+          "icon": "mdi-forum-outline",
+          "to": "/forum"
+        },
+        {
+          "title": "코드 리뷰",
+          "icon": "mdi-file-code-outline",
+          "to": "code-review"
+        },
+        {
+          "title": "기술 서적 리뷰",
+          "icon": "mdi-book-open-outline",
+          "to": "/teachBook-review"
+        }
+      ]
+    },
+    {
+      "title": "JOB'S",
+      "icon": "mdi-office-building",
+      "sub": [
+        {
+          "title": "All",
+          "icon": "mdi-border-all-variant",
+          "to": "/project"
+        },
+        {
+          "title": "구인",
+          "chip": "계약직",
+          "color": "success",
+          "icon": "mdi-account-plus-outline",
+          "to": "/job-type-contract"
+        },
+        {
+          "title": "구인",
+          "chip": "정규직",
+          "color": "primary",
+          "icon": "mdi-account-plus-outline",
+          "to": "job-type-fulltime"
+        },
+        {
+          "title": "구직",
+          "icon": "mdi-account-question-outline",
+          "to": "/resumes"
+        },
+        {
+          "title": "회사 평가",
+          "icon": "mdi-bank-check",
+          "to": "/evaluation"
+        }
+      ]
+    },
+    {
+      "title": "관리 메뉴",
+      "icon": "mdi-laptop-mac",
+      "sub": [
+        {
+          "title": "사용자 관리",
+          "icon": "mdi-account-details",
+          "to": "/"
+        }
+      ]
+    }
+  ]
+}
