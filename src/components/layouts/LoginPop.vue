@@ -7,7 +7,8 @@
   >
     <v-card>
       <v-toolbar color="primary" dark flat dense height="48px">
-        <v-toolbar-title>로그인</v-toolbar-title>
+        <v-toolbar-title v-if="!createForm">로그인</v-toolbar-title>
+        <v-toolbar-title v-else>회원가입</v-toolbar-title>
         <v-spacer />
         <v-btn text dark @click="createForm = !createForm">
           <div v-if="!createForm">
@@ -30,6 +31,7 @@
             :modal="loginModal"
             :createForm="createForm"
             @email="updateLoginInfo"
+            @updateForm="updateForm"
           />
           <div class="hr-sect">소셜 로그인</div>
           <GoogleLoginBtn @modal="updateModal" @google="updateLoginInfo" />
@@ -77,6 +79,9 @@ export default Vue.extend({
     updateModal() {
       let dialog = false;
       this.$emit("modal", dialog);
+    },
+    updateForm() {
+      this.createForm = true;
     },
     updateLoginInfo(value: UserInfo | null) {
       this.$emit("user", value);

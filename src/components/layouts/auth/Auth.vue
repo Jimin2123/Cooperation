@@ -57,7 +57,9 @@
     <v-card-title v-if="!createForm">
       <v-btn class="primary--text" text>비밀번호를 잊으셨나요?</v-btn>
       <v-spacer />
-      <v-btn class="primary--text" text>아직 회원이 아니신가요?</v-btn>
+      <v-btn class="primary--text" text @click="$emit('updateForm')"
+        >아직 회원이 아니신가요?</v-btn
+      >
     </v-card-title>
   </v-form>
 </template>
@@ -82,6 +84,7 @@ export default Vue.extend({
       password: "",
       nickName: "",
       valid: true,
+      color: "light-blue lighten-2",
       emailRules: [
         (v: string) => !!v || "이메일을 입력하세요",
         (v: string) => /.+@.+\..+/.test(v) || "이메일 형식으로 입력하세요.",
@@ -91,24 +94,27 @@ export default Vue.extend({
         (v: string) => (v && v.length >= 6) || "최소 6글자 이상 입력하세요.",
       ],
       nickNameRules: [(v: string) => !!v || "닉네임을 입력하세요"],
-      color: "light-blue lighten-2",
     };
   },
   methods: {
     async loginModule() {
-      await auth().signInWithEmailAndPassword(this.email, this.password);
-      const user = this.updateUser();
-      this.$emit("email", user);
+      try {
+        await auth().signInWithEmailAndPassword(this.email, this.password);
+        const user = this.updateUser();
+        this.$emit("email", user);
+        this.$emit("modal");
+      } catch (error) {
+        console.log(error);
+      }
     },
     loginProcess() {
-      this.loginModule();
       let check = (
         this.$refs.form as Vue & { validate: () => boolean }
       ).validate();
-      (this.$refs.form as Vue & { reset: () => void }).reset();
       if (check) {
-        this.$emit("modal");
+        this.loginModule();
       }
+      (this.$refs.form as Vue & { reset: () => void }).reset();
     },
     async register() {
       try {
@@ -125,7 +131,6 @@ export default Vue.extend({
     },
     updateUser(): UserInfo | null {
       const currentUser = auth().currentUser;
-      console.log(currentUser?.emailVerified);
       if (currentUser !== null) {
         const user: UserInfo = {
           provider: "Email",
