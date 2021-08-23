@@ -20,7 +20,7 @@
       </v-toolbar-title>
       <v-spacer />
       <v-btn icon><v-icon>mdi-magnify</v-icon></v-btn>
-      <v-btn icon v-if="!user.userID" @click="dialog = !dialog"
+      <v-btn icon v-if="!user.uid" @click="dialog = !dialog"
         ><v-icon>mdi-account</v-icon></v-btn
       >
       <UserMenu v-else :user="user" @user="logoutUser" />
@@ -83,13 +83,8 @@ export default Vue.extend({
       this.dialog = value;
     },
     userUpdate(value: UserInfo | null) {
-      const currentUser = auth().currentUser;
-      if (currentUser !== null) {
-        this.user = value;
-      }
-      if (Kakao.Auth.getAccessToken()) {
-        this.user = value;
-      }
+      console.log(value);
+      this.user = value;
     },
     logoutUser(value: boolean) {
       if (value) {

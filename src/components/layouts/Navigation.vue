@@ -14,16 +14,16 @@
     </v-list-item>
     <v-divider />
     <!-- 유저 -->
-    <v-expansion-panels v-if="user.userID" focusable max="255px">
+    <v-expansion-panels v-if="user.uid" focusable max="255px">
       <v-expansion-panel>
         <v-expansion-panel-header>
           <v-list-item>
             <v-list-item-avatar>
-              <v-img :src="user.profile_image_url" />
+              <v-img :src="user.photoURL" />
             </v-list-item-avatar>
 
             <v-list-item-content>
-              <v-list-item-title>{{ user.userNickName }}</v-list-item-title>
+              <v-list-item-title>{{ user.displayName }}</v-list-item-title>
               <v-list-item-subtitle>등급</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>

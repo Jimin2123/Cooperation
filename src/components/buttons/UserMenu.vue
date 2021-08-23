@@ -3,7 +3,7 @@
     <template v-slot:activator="{ on, attrs }">
       <v-btn icon v-bind="attrs" v-on="on">
         <v-avatar size="30px">
-          <v-img :src="user.profile_image_url" />
+          <v-img :src="user.photoURL" />
         </v-avatar>
       </v-btn>
     </template>
@@ -44,20 +44,20 @@ export default Vue.extend({
       userItems: [
         {
           title: "닉네임",
-          image: this.user.profile_image_url,
-          subtitle: this.user.userNickName,
+          image: this.user.photoURL,
+          subtitle: this.user.displayName,
         },
         {
           title: "이메일",
           icon: "",
-          subtitle: this.user.userEmail,
+          subtitle: this.user.email,
           style: "",
           color: "",
         },
         {
           title: "권한 등급",
           icon: "mdi-badge-account-alert-outline",
-          subtitle: this.user.userGrade,
+          subtitle: this.user.grade,
         },
         {
           title: "나의 페이지",
@@ -70,21 +70,21 @@ export default Vue.extend({
   },
   methods: {
     updateUserItems(): void {
-      if (this.user.provider == "Kakao") {
+      if (this.user.provider == "kakaocorp.com") {
         this.userItems[1].image =
           "https://t1.kakaocdn.net/kakaocorp/kakaocorp/admin/service/453a624d017900001.png";
-      } else if (this.user.provider == "Google") {
+      } else if (this.user.provider == "google.com") {
         this.userItems[1].icon = "mdi-google";
         this.userItems[1].style =
           "color: rgb(221, 75, 57); caret-color: rgb(221, 75, 57);";
-      } else if (this.user.provider === "Github") {
+      } else if (this.user.provider === "github.com") {
         this.userItems[1].icon = "mdi-github";
         this.userItems[1].style =
           "color: rgb(36, 42, 46); caret-color: rgb(36, 42, 46);";
       } else if (this.user.provider === "Email") {
         this.checkEmailVerified();
       }
-      if (this.user.userGrade === undefined) {
+      if (this.user.grade === undefined) {
         this.userItems[2].subtitle = "손님";
       }
     },

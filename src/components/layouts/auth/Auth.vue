@@ -134,10 +134,10 @@ export default Vue.extend({
       if (currentUser !== null) {
         const user: UserInfo = {
           provider: "Email",
-          userID: currentUser.uid,
-          userEmail: currentUser.email,
-          userNickName: currentUser.displayName,
-          profile_image_url: currentUser.photoURL,
+          uid: currentUser.uid,
+          email: currentUser.email ?? undefined,
+          displayName: currentUser.displayName ?? undefined,
+          photoURL: currentUser.photoURL ?? undefined,
           emailVerified: currentUser.emailVerified,
         };
         return user;

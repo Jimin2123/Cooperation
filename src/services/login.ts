@@ -48,6 +48,7 @@ function google() {
 
 async function kakao() {
   const login = await Kakao.Auth.login({});
+  const token = await Kakao.Auth.getAccessToken();
   const reqUser = await requestKakaoUser();
   const user = await kakaoUpdateUser(reqUser);
 
@@ -55,7 +56,7 @@ async function kakao() {
 }
 
 async function requestKakaoUser() {
-  let data: any = "";
+  let data: any;
   await Kakao.API.request({
     url: "/v2/user/me",
     success: (resp) => {
@@ -74,11 +75,12 @@ const updateUser = async () => {
   if (currentUser !== null) {
     const user: UserInfo = {
       provider: providerId,
-      userID: currentUser.uid,
-      userEmail: currentUser.email,
-      userNickName: currentUser.displayName,
-      profile_image_url: currentUser.photoURL,
+      uid: currentUser.uid,
     };
+    user["email"] = currentUser.email ?? undefined;
+    user["displayName"] = currentUser.displayName ?? undefined;
+    user["photoURL"] = currentUser.photoURL ?? undefined;
+
     return user;
   }
 };
@@ -86,17 +88,17 @@ const updateUser = async () => {
 const kakaoUpdateUser = async (response: Kakao.API.ApiResponse) => {
   const account = response["kakao_account"];
   const user: UserInfo = {
+    uid: response?.id,
     provider: "kakaocorp.com",
-    userID: response?.id,
-    userNickName: account.profile.nickname,
-    profile_image_url: account.profile.profile_image_url,
-    connected_at: response?.connected_at,
+    displayName: account.profile.nickname,
+    photoURL: account.profile.profile_image_url,
   };
   if (account.email_needs_agreement === false) {
-    user.userEmail = account.email;
+    user.email = account.email;
   }
   if (!account.gender_needs_agreement === false) {
     user.gender = account.gender;
   }
+
   return user;
 };

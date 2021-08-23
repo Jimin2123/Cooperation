@@ -9,6 +9,7 @@ firebase.initializeApp(firebaseConfig);
 export const auth = firebase.auth;
 export const db = firebase.firestore;
 export const rdb = firebase.database;
+export const funs = firebase.functions;
 
 auth().useDeviceLanguage();
 
@@ -16,6 +17,7 @@ if (location.hostname === "localhost") {
   auth().useEmulator("http://localhost:9099/");
   db().useEmulator("localhost", 5002);
   rdb().useEmulator("localhost", 9000);
+  funs().useEmulator("localhost", 5001);
 }
 
 export default firebase;

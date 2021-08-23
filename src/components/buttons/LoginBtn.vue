@@ -26,7 +26,6 @@ export default Vue.extend({
   methods: {
     async user() {
       const user = await login(this.name);
-      console.log(user);
       if (user) {
         this.$emit("user", user);
         this.$emit("modal");
