@@ -1,6 +1,6 @@
 export interface UserInfo {
-  provider: string;
-  userID: string | number | null; // 고유 아이디
+  provider?: string;
+  userID?: string | number | null; // 고유 아이디
   userEmail?: string | null;
   userName?: string | null;
   userNickName?: string | null;

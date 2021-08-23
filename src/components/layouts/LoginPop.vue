@@ -34,17 +34,13 @@
             @updateForm="updateForm"
           />
           <div class="hr-sect">소셜 로그인</div>
-          <GoogleLoginBtn @modal="updateModal" @google="updateLoginInfo" />
-          <KakaoLoginBtn
-            @kakao="updateLoginInfo"
-            @modal="updateModal"
-            @error="kakaoError"
-          />
-          <v-card-actions>
-            <v-btn block id="github" dark>
-              <v-icon left dark> mdi-github</v-icon>
-              깃허브 로그인</v-btn
-            >
+          <v-card-actions v-for="(btn, i) in buttons" :key="i">
+            <LoginBtn
+              :name="btn.name"
+              :icon="btn.icon"
+              @modal="updateModal"
+              @user="updateLoginInfo"
+            />
           </v-card-actions>
         </v-card>
       </v-card-text>
@@ -55,15 +51,16 @@
 <script lang="ts">
 import Vue from "vue";
 import AuthForm from "@/components/layouts/auth/Auth.vue";
-import KakaoLoginBtn from "@/components/buttons/KakaoLogin.vue";
-import GoogleLoginBtn from "@/components/buttons/GoogleLogin.vue";
+import LoginBtn from "@/components/buttons/LoginBtn.vue";
 import { UserInfo } from "@/interfaces/User.interface";
 
 export default Vue.extend({
   components: {
     AuthForm,
-    GoogleLoginBtn,
-    KakaoLoginBtn,
+    // GoogleLoginBtn,
+    // KakaoLoginBtn,
+    // GithubLoginBtn,
+    LoginBtn,
   },
   props: {
     loginModal: {
@@ -73,6 +70,11 @@ export default Vue.extend({
   data() {
     return {
       createForm: false,
+      buttons: [
+        { name: "google Login", icon: "mdi-google" },
+        { name: "kakao Login", icon: "mdi-account" },
+        { name: "github Login", icon: "mdi-github" },
+      ],
     };
   },
   methods: {
@@ -85,9 +87,6 @@ export default Vue.extend({
     },
     updateLoginInfo(value: UserInfo | null) {
       this.$emit("user", value);
-    },
-    kakaoError(value: Kakao.API.ApiError | Kakao.Auth.AuthError) {
-      console.log(value);
     },
   },
 });
@@ -111,10 +110,5 @@ export default Vue.extend({
   font-size: 0px;
   line-height: 0px;
   margin: 0px 16px;
-}
-
-#github {
-  background-color: rgb(36, 42, 45);
-  border-color: rgb(36, 42, 45);
 }
 </style>
