@@ -67,6 +67,7 @@
 <script lang="ts">
 import { UserInfo } from "@/interfaces/User.interface";
 import { auth } from "@/plugins/firebase";
+import { updateUser } from "@/services/login";
 import Vue from "vue";
 
 export default Vue.extend({
@@ -100,7 +101,7 @@ export default Vue.extend({
     async loginModule() {
       try {
         await auth().signInWithEmailAndPassword(this.email, this.password);
-        const user = this.updateUser();
+        const user = await updateUser();
         this.$emit("email", user);
         this.$emit("modal");
       } catch (error) {
@@ -128,21 +129,6 @@ export default Vue.extend({
       } catch (error) {
         console.log(error);
       }
-    },
-    updateUser(): UserInfo | null {
-      const currentUser = auth().currentUser;
-      if (currentUser !== null) {
-        const user: UserInfo = {
-          provider: "Email",
-          uid: currentUser.uid,
-          email: currentUser.email ?? undefined,
-          displayName: currentUser.displayName ?? undefined,
-          photoURL: currentUser.photoURL ?? undefined,
-          emailVerified: currentUser.emailVerified,
-        };
-        return user;
-      }
-      return null;
     },
   },
   watch: {

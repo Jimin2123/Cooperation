@@ -29,6 +29,7 @@
 <script lang="ts">
 import Vue from "vue";
 import LogoutBtn from "@/components/buttons/LogoutBtn.vue";
+import { auth } from "@/plugins/firebase";
 
 export default Vue.extend({
   components: {
@@ -81,7 +82,7 @@ export default Vue.extend({
         this.userItems[1].icon = "mdi-github";
         this.userItems[1].style =
           "color: rgb(36, 42, 46); caret-color: rgb(36, 42, 46);";
-      } else if (this.user.provider === "Email") {
+      } else if (this.user.provider === "password") {
         this.checkEmailVerified();
       }
       if (this.user.grade === undefined) {

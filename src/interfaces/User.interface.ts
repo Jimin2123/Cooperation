@@ -7,6 +7,8 @@ export interface UserInfo {
   photoURL?: string;
   gender?: string;
   emailVerified?: boolean;
+  age_range?: string;
+  birthday?: string;
 }
 
 export interface Account {
