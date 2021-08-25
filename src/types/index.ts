@@ -1,6 +1,6 @@
-export interface UserInfo {
+export interface User {
   provider: string;
-  uid?: string; // 고유 아이디
+  uid?: string;
   email?: string;
   phoneNumber?: string;
   displayName?: string;
@@ -9,10 +9,4 @@ export interface UserInfo {
   emailVerified?: boolean;
   age_range?: string;
   birthday?: string;
-}
-
-export interface Account {
-  account: string;
-  password: string;
-  check?: boolean;
 }

@@ -60,7 +60,7 @@ import LoginPop from "@/components/layouts/LoginPop.vue";
 import UserMenu from "@/components/buttons/UserMenu.vue";
 import Navigation from "@/components/layouts/Navigation.vue";
 import { auth } from "./plugins/firebase";
-import { UserInfo } from "./interfaces/User.interface";
+import { User } from "./types";
 
 export default Vue.extend({
   components: {
@@ -71,7 +71,7 @@ export default Vue.extend({
   data() {
     return {
       draw: false,
-      user: {} as UserInfo | null,
+      user: {} as User | null,
       dialog: false,
     };
   },
@@ -82,13 +82,13 @@ export default Vue.extend({
     updateLoginModal(value: boolean) {
       this.dialog = value;
     },
-    userUpdate(value: UserInfo | null) {
+    userUpdate(value: User | null) {
       console.log(value);
       this.user = value;
     },
     logoutUser(value: boolean) {
       if (value) {
-        this.user = {} as UserInfo | null;
+        this.user = {} as User | null;
       }
     },
   },

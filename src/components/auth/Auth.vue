@@ -65,7 +65,7 @@
 </template>
 
 <script lang="ts">
-import { UserInfo } from "@/interfaces/User.interface";
+import { User } from "@/types";
 import { auth } from "@/plugins/firebase";
 import { updateUser } from "@/services/login";
 import Vue from "vue";

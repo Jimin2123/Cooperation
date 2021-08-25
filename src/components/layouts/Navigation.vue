@@ -82,7 +82,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import navList from "@/assets/JSON/navList.json";
+import navList from "@/data/navList.json";
 
 export default Vue.extend({
   props: {

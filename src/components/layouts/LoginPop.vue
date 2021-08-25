@@ -50,9 +50,9 @@
 
 <script lang="ts">
 import Vue from "vue";
-import AuthForm from "@/components/layouts/auth/Auth.vue";
+import AuthForm from "@/components/auth/Auth.vue";
 import LoginBtn from "@/components/buttons/LoginBtn.vue";
-import { UserInfo } from "@/interfaces/User.interface";
+import { User } from "@/types";
 
 export default Vue.extend({
   components: {
@@ -85,7 +85,7 @@ export default Vue.extend({
     updateForm() {
       this.createForm = true;
     },
-    updateLoginInfo(value: UserInfo | null) {
+    updateLoginInfo(value: User | null) {
       this.$emit("user", value);
     },
   },

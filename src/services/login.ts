@@ -1,7 +1,8 @@
-import { UserInfo } from "@/interfaces/User.interface";
+import { User } from "@/types";
 import { auth } from "@/plugins/firebase";
+import VueKakaoSdkPlugin from "vue-kakao-sdk";
 
-export const login = async (provide: string): Promise<UserInfo | undefined> => {
+export const login = async (provide: string): Promise<User | undefined> => {
   let provider = null;
   if (provide.match("github")) {
     provider = await github();
@@ -48,13 +49,13 @@ function google() {
 
 async function kakao() {
   const login = await Kakao.Auth.login({});
-  const reqUser = await requestKakaoUser();
-  const user = await kakaoUpdateUser(reqUser);
-
+  const userInfo = await getKakaoUserInfo();
+  const user = await kakaoUpdateUser(userInfo);
+  await updateKakaoUser(user);
   return user;
 }
 
-async function requestKakaoUser() {
+async function getKakaoUserInfo() {
   let data: any;
   await Kakao.API.request({
     url: "/v2/user/me",
@@ -62,7 +63,7 @@ async function requestKakaoUser() {
       data = resp;
     },
     fail: (error) => {
-      console.log(error);
+      data = error;
     },
   });
   return data;
@@ -73,7 +74,7 @@ export const updateUser = async () => {
   const currentUser = auth().currentUser;
   const providerId = currentUser?.providerData[0]?.providerId ?? "unknown";
   if (currentUser !== null) {
-    const user: UserInfo = {
+    const user: User = {
       provider: providerId,
       uid: currentUser.uid,
       emailVerified: currentUser.emailVerified,
@@ -88,11 +89,23 @@ export const updateUser = async () => {
   }
 };
 
+const updateKakaoUser = async (user: User) => {
+  const currentUser = auth().currentUser;
+  currentUser
+    ?.updateProfile(user)
+    .then(() => {
+      console.log("성공");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
 const kakaoUpdateUser = async (response: Kakao.API.ApiResponse) => {
   const account = response["kakao_account"];
 
   const { nickname, profile_image_url } = account["profile"];
-  const user: UserInfo = {
+  const user: User = {
     uid: response?.id,
     provider: "kakaocorp.com",
     displayName: nickname,
