@@ -6,19 +6,13 @@
     @click:outside="updateModal"
   >
     <v-card>
-      <v-toolbar color="primary" dark flat dense height="48px">
+      <v-toolbar :color="toolbarColor" dark flat dense height="48px">
         <v-toolbar-title v-if="!createForm">로그인</v-toolbar-title>
         <v-toolbar-title v-else>회원가입</v-toolbar-title>
         <v-spacer />
         <v-btn text dark @click="createForm = !createForm">
-          <div v-if="!createForm">
-            <v-icon left>mdi-account-plus</v-icon>
-            <span>회원가입</span>
-          </div>
-          <div v-else>
-            <v-icon left>mdi-account</v-icon>
-            <span>로그인</span>
-          </div>
+          <v-icon left>{{ toolbarBtnIcon }}</v-icon>
+          <span>{{ toolbarBtnName }}</span>
         </v-btn>
         <v-btn @click="updateModal" fab icon dark>
           <v-icon size="16px">mdi-close</v-icon>
@@ -70,6 +64,9 @@ export default Vue.extend({
   data() {
     return {
       createForm: false,
+      toolbarBtnIcon: "mdi-account-plus",
+      toolbarBtnName: "회원가입",
+      toolbarColor: "primary",
       buttons: [
         { name: "google Login", icon: "mdi-google" },
         { name: "kakao Login", icon: "mdi-account" },
@@ -87,6 +84,19 @@ export default Vue.extend({
     },
     updateLoginInfo(value: User | null) {
       this.$emit("user", value);
+    },
+  },
+  watch: {
+    createForm() {
+      if (this.createForm) {
+        this.toolbarBtnIcon = "mdi-account";
+        this.toolbarBtnName = "로그인";
+        this.toolbarColor = "teal accent-5";
+      } else {
+        this.toolbarBtnIcon = "mdi-account-plus";
+        this.toolbarBtnName = "회원가입";
+        this.toolbarColor = "primary";
+      }
     },
   },
 });

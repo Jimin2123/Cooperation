@@ -40,7 +40,7 @@
         :color="color"
         outlined
         :disabled="!valid"
-        @click="loginProcess"
+        @click="login"
         block
         >로그인</v-btn
       >
@@ -98,7 +98,13 @@ export default Vue.extend({
     };
   },
   methods: {
-    async loginModule() {
+    async login() {
+      const check = (
+        this.$refs.form as Vue & { validate: () => boolean }
+      ).validate();
+
+      if (!check) return;
+
       try {
         await auth().signInWithEmailAndPassword(this.email, this.password);
         const user = await updateUser();
@@ -108,16 +114,14 @@ export default Vue.extend({
         console.log(error);
       }
     },
-    loginProcess() {
-      let check = (
+
+    async register() {
+      const check = (
         this.$refs.form as Vue & { validate: () => boolean }
       ).validate();
-      if (check) {
-        this.loginModule();
-      }
-      (this.$refs.form as Vue & { reset: () => void }).reset();
-    },
-    async register() {
+
+      if (!check) return;
+
       try {
         await auth().createUserWithEmailAndPassword(this.email, this.password);
         await auth().currentUser?.sendEmailVerification();
@@ -125,7 +129,7 @@ export default Vue.extend({
         user?.updateProfile({
           displayName: this.nickName,
         });
-        this.loginProcess();
+        this.login();
       } catch (error) {
         console.log(error);
       }

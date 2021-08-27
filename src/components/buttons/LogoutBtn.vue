@@ -28,7 +28,9 @@ export default Vue.extend({
         this.$emit("user", false);
         return;
       }
-      Kakao.Auth.logout;
+      Kakao.Auth.logout(() => {
+        this.$emit("user", true);
+      });
     },
   },
 });
