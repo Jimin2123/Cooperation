@@ -46,7 +46,7 @@
     </v-footer>
 
     <!-- 로그인 팝업 -->
-    <LoginPop
+    <LoginModal
       :loginModal="dialog"
       @modal="updateLoginModal"
       @user="userUpdate"
@@ -56,17 +56,16 @@
 
 <script lang="ts">
 import Vue from "vue";
-import LoginPop from "@/components/layouts/LoginPop.vue";
+import LoginModal from "@/components/users/LoginModal.vue";
 import UserMenu from "@/components/buttons/UserMenu.vue";
 import Navigation from "@/components/layouts/Navigation.vue";
-import { auth } from "./plugins/firebase";
 import { User } from "./types";
 
 export default Vue.extend({
   components: {
     UserMenu,
     Navigation,
-    LoginPop,
+    LoginModal,
   },
   data() {
     return {

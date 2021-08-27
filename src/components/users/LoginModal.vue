@@ -20,7 +20,7 @@
       </v-toolbar>
       <v-card-text>
         <v-card outlined class="mt-10 pa-3">
-          <AuthForm
+          <LoginForm
             @modal="updateModal"
             :modal="loginModal"
             :createForm="createForm"
@@ -44,13 +44,13 @@
 
 <script lang="ts">
 import Vue from "vue";
-import AuthForm from "@/components/auth/Auth.vue";
+import LoginForm from "@/components/users/LoginForm.vue";
 import LoginBtn from "@/components/buttons/LoginBtn.vue";
 import { User } from "@/types";
 
 export default Vue.extend({
   components: {
-    AuthForm,
+    LoginForm,
     // GoogleLoginBtn,
     // KakaoLoginBtn,
     // GithubLoginBtn,
