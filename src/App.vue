@@ -20,14 +20,16 @@
       </v-toolbar-title>
       <v-spacer />
       <v-btn icon><v-icon>mdi-magnify</v-icon></v-btn>
-      <v-btn icon v-if="!user.uid" @click="dialog = !dialog"
+      <v-btn icon v-if="!user" @click="dialog = !dialog"
         ><v-icon>mdi-account</v-icon></v-btn
       >
-      <UserMenu v-else :user="user" @user="logoutUser" />
+      <UserMenu v-else :user="user" />
     </v-app-bar>
     <Navigation :nav="draw" :user="user" @nav="updateNav" />
 
-    <v-main> </v-main>
+    <v-main>
+      {{ error }}
+    </v-main>
     <v-footer absolute app color="white" class="pa-0">
       <v-card flat width="100%" light>
         <v-divider />
@@ -46,11 +48,7 @@
     </v-footer>
 
     <!-- 로그인 팝업 -->
-    <LoginModal
-      :loginModal="dialog"
-      @modal="updateLoginModal"
-      @user="userUpdate"
-    />
+    <LoginModal :loginModal="dialog" @modal="updateLoginModal" />
   </v-app>
 </template>
 
@@ -59,7 +57,7 @@ import Vue from "vue";
 import LoginModal from "@/components/users/LoginModal.vue";
 import UserMenu from "@/components/buttons/UserMenu.vue";
 import Navigation from "@/components/layouts/Navigation.vue";
-import { User } from "./types";
+import { mapGetters } from "vuex";
 
 export default Vue.extend({
   components: {
@@ -70,7 +68,6 @@ export default Vue.extend({
   data() {
     return {
       draw: false,
-      user: {} as User | null,
       dialog: false,
     };
   },
@@ -78,18 +75,13 @@ export default Vue.extend({
     updateNav(value: boolean) {
       this.draw = value;
     },
-    updateLoginModal(value: boolean) {
-      this.dialog = value;
+    updateLoginModal() {
+      this.dialog = false;
     },
-    userUpdate(value: User | null) {
-      console.log(value);
-      this.user = value;
-    },
-    logoutUser(value: boolean) {
-      if (value) {
-        this.user = {} as User | null;
-      }
-    },
+  },
+  computed: {
+    ...mapGetters("userStore", ["user"]),
+    ...mapGetters(["error"]),
   },
 });
 </script>

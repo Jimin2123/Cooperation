@@ -65,9 +65,7 @@
 </template>
 
 <script lang="ts">
-import { User } from "@/types";
 import { auth } from "@/plugins/firebase";
-import { updateUser } from "@/services/login";
 import Vue from "vue";
 
 export default Vue.extend({
@@ -104,15 +102,10 @@ export default Vue.extend({
       ).validate();
 
       if (!check) return;
-
-      try {
-        await auth().signInWithEmailAndPassword(this.email, this.password);
-        const user = await updateUser();
-        this.$emit("email", user);
-        this.$emit("modal");
-      } catch (error) {
-        console.log(error);
-      }
+      this.$store.dispatch("userStore/email", {
+        email: this.email,
+        password: this.password,
+      });
     },
 
     async register() {
@@ -131,7 +124,7 @@ export default Vue.extend({
         });
         this.login();
       } catch (error) {
-        console.log(error);
+        throw Error(error);
       }
     },
   },

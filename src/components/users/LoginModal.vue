@@ -5,14 +5,21 @@
     :value="loginModal"
     @click:outside="updateModal"
   >
-    <v-card>
-      <v-toolbar :color="toolbarColor" dark flat dense height="48px">
-        <v-toolbar-title v-if="!createForm">로그인</v-toolbar-title>
-        <v-toolbar-title v-else>회원가입</v-toolbar-title>
+    <v-card :loading="loading">
+      <template slot="progress">
+        <v-progress-linear
+          color="deep-purple"
+          height="10"
+          indeterminate
+        ></v-progress-linear>
+      </template>
+
+      <v-toolbar :color="toolbarBtn.color" dark flat dense height="48px">
+        <v-toolbar-title>{{ toolbarBtn.title }}</v-toolbar-title>
         <v-spacer />
         <v-btn text dark @click="createForm = !createForm">
-          <v-icon left>{{ toolbarBtnIcon }}</v-icon>
-          <span>{{ toolbarBtnName }}</span>
+          <v-icon left>{{ toolbarBtn.icon }}</v-icon>
+          <span>{{ toolbarBtn.name }}</span>
         </v-btn>
         <v-btn @click="updateModal" fab icon dark>
           <v-icon size="16px">mdi-close</v-icon>
@@ -24,7 +31,6 @@
             @modal="updateModal"
             :modal="loginModal"
             :createForm="createForm"
-            @email="updateLoginInfo"
             @updateForm="updateForm"
           />
           <div class="hr-sect">소셜 로그인</div>
@@ -32,8 +38,8 @@
             <LoginBtn
               :name="btn.name"
               :icon="btn.icon"
+              :key="i"
               @modal="updateModal"
-              @user="updateLoginInfo"
             />
           </v-card-actions>
         </v-card>
@@ -46,14 +52,11 @@
 import Vue from "vue";
 import LoginForm from "@/components/users/LoginForm.vue";
 import LoginBtn from "@/components/buttons/LoginBtn.vue";
-import { User } from "@/types";
+import { mapGetters } from "vuex";
 
 export default Vue.extend({
   components: {
     LoginForm,
-    // GoogleLoginBtn,
-    // KakaoLoginBtn,
-    // GithubLoginBtn,
     LoginBtn,
   },
   props: {
@@ -64,9 +67,13 @@ export default Vue.extend({
   data() {
     return {
       createForm: false,
-      toolbarBtnIcon: "mdi-account-plus",
-      toolbarBtnName: "회원가입",
-      toolbarColor: "primary",
+      headerLoading: false,
+      toolbarBtn: {
+        title: "로그인",
+        icon: "mdi-account-plus",
+        name: "회원가입",
+        color: "primary",
+      },
       buttons: [
         { name: "google Login", icon: "mdi-google" },
         { name: "kakao Login", icon: "mdi-account" },
@@ -76,26 +83,41 @@ export default Vue.extend({
   },
   methods: {
     updateModal() {
-      let dialog = false;
-      this.$emit("modal", dialog);
+      this.$emit("modal");
     },
     updateForm() {
       this.createForm = true;
     },
-    updateLoginInfo(value: User | null) {
-      this.$emit("user", value);
-    },
+  },
+  computed: {
+    ...mapGetters(["loading", "error"]),
   },
   watch: {
     createForm() {
+      const button = [
+        {
+          title: "로그인",
+          icon: "mdi-account-plus",
+          name: "회원가입",
+          color: "primary",
+        },
+        {
+          title: "회원가입",
+          icon: "mdi-account",
+          name: "로그인",
+          color: "teal accent-5",
+        },
+      ];
       if (this.createForm) {
-        this.toolbarBtnIcon = "mdi-account";
-        this.toolbarBtnName = "로그인";
-        this.toolbarColor = "teal accent-5";
+        this.toolbarBtn = button[1];
       } else {
-        this.toolbarBtnIcon = "mdi-account-plus";
-        this.toolbarBtnName = "회원가입";
-        this.toolbarColor = "primary";
+        this.toolbarBtn = button[0];
+      }
+    },
+    loading(value) {
+      const err = this.error;
+      if (!value && !err) {
+        this.updateModal();
       }
     },
   },

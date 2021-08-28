@@ -1,13 +1,13 @@
 <template>
-  <v-btn block :id="activeClass" dark @click="user">
+  <v-btn block :id="activeClass" dark @click="login">
     <v-icon left dark>{{ icon }}</v-icon>
     {{ name }}</v-btn
   >
 </template>
 
 <script lang="ts">
-import { login } from "@/services/login";
 import Vue from "vue";
+import { mapGetters } from "vuex";
 
 export default Vue.extend({
   props: {
@@ -21,14 +21,20 @@ export default Vue.extend({
   data() {
     return {
       activeClass: "google",
+      btn: null,
     };
   },
+  computed: {
+    ...mapGetters(["error"]),
+  },
   methods: {
-    async user() {
-      const user = await login(this.name);
-      if (user) {
-        this.$emit("user", user);
-        this.$emit("modal");
+    login() {
+      if (this.icon === "mdi-google") {
+        this.$store.dispatch("userStore/google");
+      } else if (this.icon === "mdi-account") {
+        this.$store.dispatch("userStore/kakao");
+      } else if (this.icon === "mdi-github") {
+        this.$store.dispatch("userStore/github");
       }
     },
     color() {

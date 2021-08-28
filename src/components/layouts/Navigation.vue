@@ -14,7 +14,7 @@
     </v-list-item>
     <v-divider />
     <!-- 유저 -->
-    <v-expansion-panels v-if="user.uid" focusable max="255px">
+    <v-expansion-panels v-if="user" focusable max="255px">
       <v-expansion-panel>
         <v-expansion-panel-header>
           <v-list-item>

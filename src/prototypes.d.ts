@@ -1,5 +1,6 @@
 import axios, { AxiosStatic } from "axios";
 import firebase from "firebase/app";
+import Toasted from "vue-toasted";
 import Vue from "vue";
 
 Vue.prototype.$axios = axios;
