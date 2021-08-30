@@ -83,6 +83,9 @@ export default Vue.extend({
     ...mapGetters("userStore", ["user"]),
     ...mapGetters(["error"]),
   },
+  beforeCreate() {
+    this.$store.dispatch("userStore/getUserInfo");
+  },
 });
 </script>
 

@@ -30,11 +30,11 @@ export default Vue.extend({
   methods: {
     login() {
       if (this.icon === "mdi-google") {
-        this.$store.dispatch("userStore/google");
+        this.$store.dispatch("userStore/socialLogin", "google");
       } else if (this.icon === "mdi-account") {
         this.$store.dispatch("userStore/kakao");
       } else if (this.icon === "mdi-github") {
-        this.$store.dispatch("userStore/github");
+        this.$store.dispatch("userStore/socialLogin", "github");
       }
     },
     color() {

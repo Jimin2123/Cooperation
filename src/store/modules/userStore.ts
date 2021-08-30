@@ -38,13 +38,24 @@ const module: Module<userStore, RootState> = {
           commit("setLoading", false, { root: true });
         });
     },
-    google({ commit }) {
+    socialLogin({ commit, dispatch }, payload) {
       commit("setLoading", true, { root: true });
       commit("clearError", undefined, { root: true });
-      const provider = new auth.GoogleAuthProvider();
+      let provider: any;
+      if (payload.match("github")) {
+        provider = new auth.GithubAuthProvider();
+      } else if (payload.match("google")) {
+        provider = new auth.GoogleAuthProvider();
+      }
+      if (!provider) {
+        const message = "can't not find provider";
+        commit("setError", { message: message }, { root: true });
+        return;
+      }
       auth()
         .signInWithPopup(provider)
         .then((user) => {
+          dispatch("setToken");
           commit("setLoading", false, { root: true });
           const providerId = provider.providerId;
           const updateParams = firebaseUpdateParams(user, providerId);
@@ -55,35 +66,58 @@ const module: Module<userStore, RootState> = {
           commit("setLoading", false, { root: true });
         });
     },
-    github({ commit }) {
-      commit("setLoading", true, { root: true });
-      commit("clearError", undefined, { root: true });
-      const provider = new auth.GithubAuthProvider();
-      auth()
-        .signInWithPopup(provider)
-        .then((user) => {
-          commit("setLoading", false, { root: true });
-          const providerId = provider.providerId;
-          const updateParams = firebaseUpdateParams(user, providerId);
-          commit("setUser", updateParams);
-        })
-        .catch((error) => {
-          commit("setError", error, { root: true });
-          commit("setLoading", false, { root: true });
-        });
+
+    async setToken({ commit }, payload) {
+      const currentUser = auth().currentUser;
+      const idToken = await currentUser?.getIdToken();
+      if (idToken) localStorage.setItem("firebase_token", idToken);
     },
+
+    async kakao({ commit, dispatch }) {
+      commit("setLoading", true, { root: true });
+      Kakao.Auth.login({
+        success: (authObj) => {
+          dispatch("getUserInfo");
+          commit("setLoading", false, { root: true });
+        },
+        fail: (error) => {
+          store.commit("setError", error, { root: true });
+          store.commit("setLoading", false, { root: true });
+        },
+      });
+    },
+
+    async getUserInfo({ commit }, payload) {
+      const kakaoToken = Kakao.Auth.getAccessToken();
+      if (kakaoToken) {
+        const user = await getKakaoUserInfo();
+        if (user === undefined) return;
+        const updateParams = await kakaoUpdateParams(user);
+        commit("setUser", updateParams);
+      }
+      const firebaseToken = localStorage.getItem("firebase_token");
+      if (firebaseToken) {
+        const base64Payload = firebaseToken.split(".")[1];
+        const payload = Buffer.from(base64Payload, "base64");
+        const result = JSON.parse(payload.toString());
+        console.log(result);
+        const updateParams = await jwtUpdateParams(result);
+        commit("setUser", updateParams);
+      }
+    },
+
     logout({ commit }) {
-      auth().signOut();
+      if (Kakao.Auth.getAccessToken()) {
+        Kakao.Auth.logout(() => {
+          // console.log(Kakao.Auth.getAccessToken());
+        });
+      }
+      const current = auth().currentUser;
+      if (current) {
+        auth().signOut();
+        localStorage.removeItem("firebase_token");
+      }
       commit("setUser", null);
-    },
-    async kakao({ commit }) {
-      commit("setLoading", true, { root: true });
-      await Kakao.Auth.login({});
-      const userInfo = await getKakaoUserInfo();
-      if (userInfo === undefined) return;
-      const updateParams = await kakaoUpdateParams(userInfo);
-      commit("setUser", updateParams);
-      commit("setLoading", false, { root: true });
     },
   },
   getters: {
@@ -119,17 +153,30 @@ function firebaseUpdateParams(
   return updateParams;
 }
 
-function updatePhotoURL(user: string): string {
-  const icon = ["mm", "identicon", "monsterid", "wavatar", "retro"];
-  const MD5Email = crypto.MD5(user);
-  const hash = crypto.enc.Hex.stringify(MD5Email).trim();
-  const photoURL = `https://www.gravatar.com/avatar/${hash}.jpg?d=${icon[4]}`;
+function jwtUpdateParams(payload: any) {
+  const updateParams: User = {
+    provider: payload.firebase.sign_in_provider || "unknown",
+    uid: payload.user_id,
+  };
 
-  return photoURL;
+  if (payload.name) updateParams["displayName"] = payload.name;
+  if (payload.email) {
+    updateParams["email"] = payload.email;
+    updateParams["emailVerified"] = payload.email_verified;
+  }
+  if (payload.email || payload.user_id) {
+    updateParams["photoURL"] =
+      payload.picture || updatePhotoURL(payload.email || payload.user_id);
+  } else {
+    updateParams["photoURL"] = payload.picture || null;
+  }
+  if (payload.phone_number) updateParams["phoneNumber"] = payload.phone_number;
+
+  return updateParams;
 }
 
 async function getKakaoUserInfo() {
-  let data: Kakao.API.ApiResponse | undefined;
+  let data: undefined | Kakao.API.ApiResponse;
   await Kakao.API.request({
     url: "/v2/user/me",
     success: (resp) => {
@@ -140,6 +187,7 @@ async function getKakaoUserInfo() {
       store.commit("setLoading", false, { root: true });
     },
   });
+
   return data;
 }
 
@@ -153,29 +201,26 @@ const kakaoUpdateParams = async (response: Kakao.API.ApiResponse) => {
     displayName: nickname,
   };
 
-  const {
-    email_needs_agreement,
-    is_email_verified,
-    email,
-    gender,
-    birthday_needs_agreement,
-    birthday,
-    age_range_needs_agreement,
-    gender_needs_agreement,
-    age_range,
-  } = account;
-
-  if (!email_needs_agreement) {
-    user["email"] = email;
-    user["emailVerified"] = is_email_verified;
+  if (!account.email_needs_agreement) {
+    user["email"] = account.email;
+    user["emailVerified"] = account.is_email_verified;
   }
-  user["photoURL"] = profile_image_url || updatePhotoURL(email || response.id);
-  if (!age_range_needs_agreement) user["age_range"] = age_range;
-  if (!birthday_needs_agreement) user["birthday"] = birthday;
-  if (!gender_needs_agreement) user["gender"] = gender;
+  user["photoURL"] =
+    profile_image_url || updatePhotoURL(account.email || response.id);
+  if (!account.age_range_needs_agreement) user["age_range"] = account.age_range;
+  if (!account.birthday_needs_agreement) user["birthday"] = account.birthday;
+  if (!account.gender_needs_agreement) user["gender"] = account.gender;
 
   return user;
 };
-// 사용 예시 : this.$store.dispatch('moduleB/setRootData', 'test'); //ModuleState
+
+function updatePhotoURL(user: string): string {
+  const icon = ["mm", "identicon", "monsterid", "wavatar", "retro"];
+  const MD5Email = crypto.MD5(user);
+  const hash = crypto.enc.Hex.stringify(MD5Email).trim();
+  const photoURL = `https://www.gravatar.com/avatar/${hash}.jpg?d=${icon[4]}`;
+
+  return photoURL;
+}
 
 export default module;
